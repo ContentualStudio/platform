@@ -1,0 +1,28 @@
+# The Railway service builds from the repository root, not from api/. Yarn 4
+# needs the root yarn.lock, .yarnrc.yml and .yarn/releases in the build context,
+# and `build:deps` builds the content-engine-vocabulary workspace, which only
+# resolves from the workspace root. Every command below is therefore run through
+# `yarn workspace`, which sets the working directory to api/ for us.
+[build]
+builder = "RAILPACK"
+buildCommand = "yarn workspace @contentual/api build"
+watchPatterns = [
+  "api/**",
+  "packages/content-engine-vocabulary/**",
+  "package.json",
+  "yarn.lock",
+  ".yarnrc.yml",
+]
+
+[deploy]
+# Railway runs this once between build and deploy, with the service's variables
+# available. A failing migration exits non-zero and halts the deploy, so a bad
+# migration never reaches a running container. It must not live in the start
+# command: that runs on every restart and replica scale-up, which would let
+# concurrent migrations race each other.
+preDeployCommand = ["yarn workspace @contentual/api migration:run:prod"]
+startCommand = "yarn workspace @contentual/api start:prod"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

@@ -1,0 +1,49 @@
+{
+  "name": "contentual",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Isolated monorepo for the Contentual frontend, backend and CMS.",
+  "workspaces": [
+    "web",
+    "api",
+    "cms",
+    "packages/content-engine-vocabulary",
+    "packages/programme-matching-vocabulary",
+    "packages/design-check"
+  ],
+  "engines": {
+    "node": ">=20.19.0",
+    "yarn": ">=4.0.0"
+  },
+  "scripts": {
+    "dev": "yarn dev:web",
+    "dev:web": "yarn workspace @contentual/web dev",
+    "dev:api": "yarn workspace @contentual/api start:dev",
+    "dev:web:https": "yarn workspace @contentual/web dev:https",
+    "dev:api:https": "yarn workspace @contentual/api start:dev:https",
+    "dev:cms": "yarn workspace @contentual/cms dev",
+    "start:proxy": "ngrok http 3000 --url=contentual.ngrok-free.app",
+    "build": "yarn build:content-engine-vocabulary && yarn build:programme-matching-vocabulary && yarn build:web && yarn build:api && yarn build:cms",
+    "build:content-engine-vocabulary": "yarn workspace @contentual/content-engine-vocabulary build",
+    "build:web": "yarn workspace @contentual/web build",
+    "build:api": "yarn workspace @contentual/api build",
+    "build:cms": "yarn workspace @contentual/cms build",
+    "start:web": "yarn workspace @contentual/web start",
+    "start:api": "yarn workspace @contentual/api start:prod",
+    "start:cms": "yarn workspace @contentual/cms start",
+    "lint": "yarn workspace @contentual/content-engine-vocabulary lint && yarn workspace @contentual/programme-matching-vocabulary lint && yarn workspace @contentual/web lint && yarn workspace @contentual/api lint && yarn workspace @contentual/cms lint && yarn workspace @contentual/design-check lint",
+    "design:check": "yarn workspace @contentual/design-check check",
+    "design:report": "yarn workspace @contentual/design-check report",
+    "design:visual": "yarn workspace @contentual/design-check visual",
+    "demo:rate-limit": "yarn workspace @contentual/web demo:rate-limit",
+    "build:programme-matching-vocabulary": "yarn workspace @contentual/programme-matching-vocabulary build",
+    "push:dev": "git push origin HEAD",
+    "push:prod": "bash scripts/push-prod.sh",
+    "push:all": "yarn push:dev && yarn push:prod"
+  },
+  "packageManager": "yarn@4.18.0",
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "typescript": "^6.0.3"
+  }
+}

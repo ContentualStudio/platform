@@ -1,0 +1,53 @@
+.matching-rules-field {
+  display: grid;
+  gap: 1rem;
+}
+
+.matching-rules-field__hint,
+.matching-rules-field__empty {
+  color: var(--theme-elevation-600);
+  margin: 0;
+}
+
+.matching-rules-field__error {
+  color: var(--theme-error-500);
+  margin: 0;
+}
+
+.matching-rules-field__list {
+  display: grid;
+  gap: 1rem;
+}
+
+.matching-rules-field__rule,
+.matching-rules-field__condition {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.matching-rules-field__condition {
+  border: 1px solid var(--theme-elevation-150);
+}
+
+.matching-rules-field__toolbar,
+.matching-rules-field__values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.matching-rules-field label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.matching-rules-field__checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}
+
+.matching-rules-field button {
+  justify-self: start;
+}

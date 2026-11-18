@@ -1,0 +1,114 @@
+# The design-conformance gate.
+#
+# The split here is deliberate. The static check is fast, hermetic and
+# deterministic — no browser, no database, no dev server — so it gates every
+# pull request, and it is the half that actually prevents new drift.
+#
+# The visual pass is not a gate. It needs Postgres, the api, a dev server and
+# browser binaries, it takes minutes, and several of its findings are
+# judgement calls. Blocking a merge on "the alignment clusterer thinks this
+# edge is 3px off" is how a check gets disabled within a fortnight. It runs on
+# demand and weekly, and publishes its report as an artifact.
+
+name: design
+
+on:
+  pull_request:
+    paths:
+      - "web/**"
+      - "packages/design-check/**"
+      - ".github/workflows/design.yml"
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # Monday morning, so the report is waiting at the start of the week.
+    - cron: "0 7 * * 1"
+
+concurrency:
+  group: design-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: design:check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - run: corepack enable
+      - run: yarn install --immutable
+
+      # The design gate itself.
+      - name: Check the design system and every call site
+        run: yarn design:check
+
+      # Folded in because nothing else runs them automatically, which is a
+      # bigger gap than the design one.
+      - name: Lint
+        run: yarn lint
+
+      - name: Unit tests
+        run: |
+          yarn workspace @contentual/design-check test
+          yarn workspace @contentual/web test
+          yarn workspace @contentual/content-engine-vocabulary test
+
+  visual:
+    name: design:visual
+    # Advisory only: never blocks a merge.
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: contentual
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/contentual
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET || 'design-check-ci-secret' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - run: corepack enable
+      - run: yarn install --immutable
+
+      - name: Prepare the database
+        run: yarn workspace @contentual/api migration:run
+
+      - name: Start the api
+        run: yarn workspace @contentual/api start:dev &
+
+      - run: yarn workspace @contentual/design-check visual:install
+
+      - name: Review every screen
+        run: yarn design:visual
+
+      - name: Build the report
+        if: always()
+        run: yarn design:report
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: design-report
+          path: output/design-check/
+          retention-days: 30

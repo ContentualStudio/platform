@@ -1,0 +1,13 @@
+.matching-publish-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.matching-publish-button [role="alert"] {
+  color: var(--theme-error-500);
+}
+
+.matching-publish-button [role="status"] {
+  color: var(--theme-success-500);
+}

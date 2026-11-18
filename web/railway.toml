@@ -1,0 +1,22 @@
+# The Railway service builds from the repository root, not from web/. Yarn 4
+# needs the root yarn.lock, .yarnrc.yml and .yarn/releases in the build context,
+# and workspace packages such as programme-matching-vocabulary only resolve from
+# the workspace root. Every command below is therefore run through
+# `yarn workspace`, which sets the working directory to web/ for us.
+[build]
+builder = "RAILPACK"
+buildCommand = "yarn workspace @contentual/web build"
+watchPatterns = [
+  "web/**",
+  "packages/programme-matching-vocabulary/**",
+  "package.json",
+  "yarn.lock",
+  ".yarnrc.yml",
+]
+
+[deploy]
+startCommand = "yarn workspace @contentual/web start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10

@@ -1,0 +1,39 @@
+{
+  "name": "@contentual/programme-matching-vocabulary",
+  "private": true,
+  "version": "0.1.0",
+  "type": "commonjs",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/cjs/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "yarn build:cjs && yarn build:esm",
+    "build:cjs": "tsc -p tsconfig.json",
+    "build:esm": "tsc -p tsconfig.esm.json && node -e \"require('fs').writeFileSync('dist/esm/package.json', '{\\\"type\\\":\\\"module\\\"}')\"",
+    "lint": "eslint \"src/**/*.ts\" && tsc -p tsconfig.json --noEmit && yarn verify:consumer",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "verify:consumer": "yarn build && tsc -p tsconfig.consumer.json"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/node": "^26.1.0",
+    "eslint": "^9.39.4",
+    "globals": "^17.7.0",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.63.0"
+  }
+}

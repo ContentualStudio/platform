@@ -1,0 +1,66 @@
+{
+  "$comment": [
+    "The design system's declared intent, plus the narrow set of genuine exceptions.",
+    "Every exception needs a `reason` of at least 20 characters, and an exception that",
+    "matches nothing is a hard error — dead entries must be deleted, not left to rot.",
+    "This is deliberately not a baseline file: it cannot be regenerated from the",
+    "current state of the code."
+  ],
+
+  "colorRelations": {
+    "$comment": [
+      "`aliases` are tokens intended to be exactly the same colour. Each group is a",
+      "deliberate statement that the sameness is the design, not an oversight.",
+      "`themeInvariant` are tokens that hold one value in both themes, because the",
+      "surface they paint never follows the theme — the immersive programme screens are",
+      "always dark. They belong to the dark palette alone.",
+      "`adjacent` are pairs designed to sit next to each other and differ subtly. They",
+      "are exempt from the near-duplicate threshold but must still clear the",
+      "side-by-side visibility threshold, which is what caught dark mode's identical",
+      "surface / surface-raised before it was fixed.",
+      "accent / accent-text match in dark mode only: accent-text is the accent darkened",
+      "to pass 4.5:1 as small text on light surfaces; dark surfaces already give the",
+      "accent 4.8:1 or better, so there it is the accent itself."
+    ],
+    "themeInvariant": [
+      "--ds-immersive-bg",
+      "--ds-immersive-surface",
+      "--ds-immersive-fg"
+    ],
+    "aliases": [
+      ["--ds-bg", "--ds-surface-raised", "--ds-accent-on", "--ds-immersive-fg"],
+      ["--ds-bg", "--ds-immersive-bg"],
+      ["--ds-surface", "--ds-control"],
+      ["--ds-fg", "--ds-border-strong"],
+      ["--ds-accent", "--ds-accent-text"]
+    ],
+    "adjacent": [
+      ["--ds-bg", "--ds-surface"],
+      ["--ds-surface", "--ds-surface-raised"],
+      ["--ds-border", "--ds-border-strong"],
+      ["--ds-fg", "--ds-fg-soft"],
+      ["--ds-border", "--ds-control-hover"],
+      ["--ds-control", "--ds-control-hover"],
+      ["--ds-surface", "--ds-border"],
+      ["--ds-bg", "--ds-control"],
+      ["--ds-surface-raised", "--ds-control"],
+      ["--ds-muted", "--ds-muted-strong"],
+      ["--ds-surface", "--ds-immersive-surface"]
+    ]
+  },
+
+  "exceptions": [
+    {
+      "file": "web/src/components/auth/google-auth-button.tsx",
+      "rule": "colour-literal",
+      "values": ["#4285F4", "#34A853", "#FBBC05", "#EA4335"],
+      "reason": "The four fills of Google's G mark. Google's brand guidelines forbid recolouring it, so these cannot follow our palette or our themes."
+    },
+    {
+      "file": "web/src/components/ui/chart.tsx",
+      "rule": "colour-literal",
+      "values": ["#ccc", "#fff"],
+      "reason": "Attribute selectors matching colours Recharts hardcodes into its own markup. These are how we find its elements in order to restyle them, not colours we set."
+    }
+  ]
+}

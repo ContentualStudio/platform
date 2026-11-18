@@ -1,0 +1,45 @@
+.DS_Store
+node_modules/
+npm-debug.log*
+.env
+.env.*
+!.env.example
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Next.js
+.next/
+.next.*/
+out/
+
+# NestJS
+dist/
+coverage/
+*.tsbuildinfo
+
+# Railway
+.railway/
+output/
+tmp/
+docs/
+
+# design:check — signed session cookies for the visual pass
+packages/design-check/visual/.auth/
+# Local-only working material: design/plan notes, scratch output and
+# generated artefacts that are useful on a machine but not shared history.
+docs/
+output/
+tmp/
+packages/design-check/
+
+# Local mkcert certificates (yarn dev:web:https)
+.certs/
+
+# Full-size design source exports (kept locally, too large for git)
+design/source/
+design/assets/media/welcome-video.mp4
